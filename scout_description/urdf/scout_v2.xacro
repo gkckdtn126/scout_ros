@@ -21,7 +21,16 @@
     <xacro:property name="wheel_vertical_offset" value="-0.0702" />
 
     <xacro:property name="wheel_length" value="1.1653e-01" />
-    <xacro:property name="wheel_radius" value="1.6459e-01" />
+    <xacro:property name="wheel_radius" value="0.8229e-01" />
+
+    <!-- Base footprint -->
+    <link name="base_footprint"/>
+
+    <joint name="base_footprint_joint" type="fixed">
+        <origin xyz="0 0 ${wheel_vertical_offset - wheel_radius}" rpy="0 0 0" />
+        <parent link="base_link" />
+        <child link="base_footprint" />
+    </joint>
 
     <!-- Base link -->
     <link name="base_link">
@@ -45,13 +54,7 @@
         </collision>
     </link>
 
-    <link name="base_footprint"/>
 
-    <joint name="base_footprint_joint" type="fixed">
-        <origin xyz="0 0 ${wheel_vertical_offset - wheel_radius}" rpy="0 0 0" />
-        <parent link="base_link" />
-        <child link="base_footprint" />
-    </joint>
 
     <link name="inertial_link">
         <inertial>
@@ -66,7 +69,37 @@
         <parent link="base_link" />
         <child link="inertial_link" />
     </joint>
+    
+    <!-- 2D-rplidar -->
+    <link name="rplidar_link">
+	<collision>
+		<origin xyz="0 0 0" rpy="0 0 0"/>
+		<geometry>
+			<box size="0.1 0.1 0.1"/>
+		</geometry>
+	</collision>
 
+	<visual>
+		<origin xyz="0 0 -0.03125" rpy="1.5707 0 0"/>
+		<geometry>
+			<box size="0.1 0.1 0.1"/>
+			<meshfile name="package://scout_description/meshes/rplidar.dae" scale="0.1 0.1 0.1" />
+		</geometry>			
+	</visual>
+
+	<inertial>
+		<mass value="1e-5"/>
+		<origin xyz="0 0 0" rpy="0 0 0"/>
+		<inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
+	</inertial>
+    </link>
+
+    <joint name="rplidar_joint" type="fixed">
+	<axis xyz="0 1 0"/>
+	<origin xyz="5 0 5" rpy="0 0 0 "/>
+	<parent link="base_link"/>
+	<child link="rplidar_link"/>
+    </joint>
     <!-- Scout wheel macros -->
     <!-- wheel labeled from 0 to 3, conter-clockwise, starting from front right wheel -->
     <!-- motor 1 and 2 (left side) are mechanically installed in a reversed direction -->
